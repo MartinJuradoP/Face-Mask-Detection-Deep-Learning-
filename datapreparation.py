@@ -1,13 +1,11 @@
 from os import listdir
 from matplotlib import image
 import numpy as np
-from PIL import Image #Pillow
+from PIL import Image 
 import cv2
 from time import sleep
-
 import tensorflow as tf
 import tensorflow.keras
-
 from tensorflow.keras.models import Sequential,Model
 from tensorflow.keras.layers import Dense,Dropout,Flatten,Conv2D,MaxPooling2D,Input
 from tensorflow.keras import backend as K
@@ -15,51 +13,60 @@ from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.optimizers import SGD,Adam
 from tensorflow.keras.applications import VGG16
 import matplotlib.pylab as plt
-from keras.datasets import fashion_mnist
-# load all images in a directory
+
 from sklearn.model_selection import train_test_split
-class_name=['face','mask']
+
+
+class_name=['face','mask'] # Classes 
 i=0
-x = []
-y =  []
-for filename in listdir('example'):
+x = [] # trainning Data as Matrix, pictures
+y =  [] # class
+
+# load all images from data directory one by one to create classification
+
+for filename in listdir('data'):
     i=i+1
 
     r=filename[0]
-    #print(r,i)
-    img = cv2.imread('example' + '/' + filename)
+    
+    img = cv2.imread('data' + '/' + filename)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    #image = Image.open('example' + '/' + filename)
-    res = cv2.resize(gray, dsize=(56,56), interpolation=cv2.INTER_CUBIC)
+    res = cv2.resize(gray, dsize=(56,56), interpolation=cv2.INTER_CUBIC) # Resizing the images to 56x56 pixels, to have the same dimensions
 
 
-    data = np.asarray(res) / 255
-    #print(data.shape)
-    x.append(data)
+    data = np.asarray(res) / 255 # Converting the image into an arrangement form. It is divided into 255 to normalize the values.
+    
+    x.append(data) # Each image is added in x Vector format to create the dataset.
+
+#Labeling the pictures in the y Vector to have the classification. 
     if r == 'f':
         y.append(int(0))
     else:
         y.append(int(1))
 
+
+#It is necessary to put in array format
 xnp=np.array(x)
 ynp=np.array(y)
 
 
 
-
-batch_size=64
+#The parameter to train the neural network
+batch_size=64 
 num_classes=2
 epochs=5
 
-
+#Split the  dataset vectors into test and training vectors to avoid overfitting and validate our model.
 xt, xtest, yt, ytest = train_test_split(xnp, ynp, test_size=0.30)
 xr=xt
 xre=xtest
 yre=ytest
-xt=xt.reshape(xt.shape[0],56,56,1)
-xtest=xtest.reshape(xtest.shape[0],56,56,1)
-yt=tensorflow.keras.utils.to_categorical(yt,num_classes)
-ytest=tensorflow.keras.utils.to_categorical(ytest,num_classes)
+xt=xt.reshape(xt.shape[0],56,56,1) #transpose the input vector x.
+xtest=xtest.reshape(xtest.shape[0],56,56,1) #transpose the input vector x.
+yt=tensorflow.keras.utils.to_categorical(yt,num_classes)#create class vector
+ytest=tensorflow.keras.utils.to_categorical(ytest,num_classes)#create class vector
+
+#Creation of the Neural Network Layers
 
 Entradas=Input(shape=(56,56,1))
 x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block_conv1')(Entradas)
@@ -91,13 +98,18 @@ x=Dense(128,activation='relu')(x)
 x=Dropout(0.5)(x)
 x=Dense(num_classes,activation='softmax')(x)
 
+
+#Model Creation
 modelo = Model(inputs=Entradas, outputs=x)
 #modelo.summary()
 
-Adam = Adam(lr=0.0001,beta_1=0.9,beta_2=0.9)#SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+#Optimization method Adam or SGD
+Adam = Adam(lr=0.0001,beta_1=0.9,beta_2=0.9) #SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
 
 modelo.compile(loss=tensorflow.keras.losses.categorical_crossentropy,optimizer=Adam,metrics=['categorical_accuracy'])
 
+
+#Print the efficiency of the model with its loss function and its accuracy
 history=modelo.fit(xt,yt,batch_size=batch_size,epochs=epochs,verbose=1,validation_data=(xtest,ytest))
 
 puntuacion=modelo.evaluate(xtest,ytest,verbose=1)

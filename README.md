@@ -7,36 +7,45 @@ This project has the target to cover three stages of a Machine Learning implemen
 
 Where it pretends to identify when the people it is using masks or not. (Two classes, Mask and Not Mask), this will be applied using a neural network with some usabilities from Keras and tensor flow like Conv2D, Dropout, MaxPooling2D, Flatten to create our neural network.   
 
-## Comenzando 🚀
+## Start 🚀
 
-Para levantar los ambientes, nos tenemos que posicionar en la carpeta raíz del proyecto, no importa si es Windows o Mac con los accedemos mediante la consola y corremos las siguientes líneas.
+The project consists in 3 main files. 
 
-$ vagrant up nodo1 nodo2 nodo3
+1) Data Collection / datasetcreator.py
+2) Data Training / datapreparation.py
+3) Data Predictive / datapredictive.py
 
-Vagrant de manera natural consume el archivo de configuración para crear los ambientes virtuales o levantarlos si estos ya fueron creados.
+These do not have a main file, because the purpose of this project is to understand the three stages (Collect, training, and predicve).
 
-Existe otros dos comandos que nos ayudan para poder mantener esos ambientes virtuales.
+## datasetcreator.py
 
-$ vagrant destroy nodo1 nodo2 nodo3
+This code uses Open Cv to enable the camera and identify faces to extract them and create the dataset, also it is possible to label the images during this process, with f if it is face or m it is a face with Mask. 
 
-Este comando nos ayuda a destruir o eliminar las maquinas virtuales creadas.
+For this step it is important to remember that we have two classes, with mask and without mask. Once you run the code, it will save 420 images. It is not possible to save the two classes at the same time with mask and without because the label is defined at the beginning, it is necessary to do separately.
 
-$ vagrant suspend nodo1 nodo2 nodo3
+## datapreparation.py
 
-Con la sintaxis suspend, las maquinas o maquina virtual se queda en pausa justamente en el momento que aplicamos el comando.
+This program extracts all the images taken previously, in order to create the input vector x of our data set and the vector Y that contains its result or classification, this to train our neural network, this classification is done by the name of the image to be able to tag the images automatically with the help of the previous code.
 
-Recuerden que los nodo1 nodo2 y nodo3 son la referencia a las maquinas virtuales que creamos con vagrantfile. 
+Separation of the dataset is performed in test and training vectors.
 
-$vagrant ssh nodo1
+The layers of neural networks are created. And it is optimized by models like Adam which is a replacement optimization algorithm for stochastic gradient descent for training deep learning models.
 
-Este comando nos ayuda a acceder a las maquinas virtuales creadas.
+The performance of the model is verified through curves during and after its creation.
+
+## datapredictive.py
+
+Finally, with the trained model, we proceed to predict in real time when someone has a mask or not. Through a visual identifier with the help of the camera.
 
 
 
+### Pre requirements 📋
 
-### Pre-requisitos 📋
+-Python3.
 
--Instalar Virtual Box, que es el encargado consumir el recurso de nuestra maquina y asignarlo a los ambientes virtuales que queremos crear.
+Libraries:
 
--Instalar Vagrant, será la herramienta para crear y configurar los ambientes virtuales que se comunicaran con virtual Box con las características que necesitamos para este proyecto.
+    1) Data Collection: Numpy, OpenCv(cv2)
+    2) Data Training: Numpy, OpenCv (cv2), tensorflow (GPU or CPU), matplotlib, PIL, sklearn, time.
+    3) Data Predictive: Numpy, OpenCv (cv2), tensorflow.
 

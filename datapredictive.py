@@ -3,7 +3,7 @@ import cv2
 import tensorflow as tf
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-loaded_model = tf.keras.models.load_model('modelo')
+loaded_model = tf.keras.models.load_model('modelo') #Load the model that was created
 
 cap = cv2.VideoCapture(0)
 
@@ -22,6 +22,8 @@ while(True):
         xt = data.reshape(1,56, 56, 1)
         predictions = loaded_model.predict(xt)
         predicted_label = np.argmax(predictions)
+        #The input to the model is entered, and it is classified by a percentage that the model returns.
+        #A visual identifier is created
         print(predicted_label,type(predicted_label))
         if predicted_label < 1:
             cv2.putText(img, 'No Mask', (x + w, y + h), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
