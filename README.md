@@ -1,4 +1,4 @@
-# Face Mask identification (Deep Learning) 😷
+# Face Mask Detection (Deep Learning) 😷
 
 This project has the target to cover three stages of a Machine Learning implementation. 
 1) Data Collection. 
